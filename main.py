@@ -80,7 +80,8 @@ async def get_attendance(interaction: discord.Interaction, name: str, days: int)
 
 @client.tree.command(name="gkick")
 @app_commands.describe(
-    days="Write the numbers of days", activity_threshold="Write inactive period"
+    days="Write the numbers of days", activity_threshold="Write inactive period",
+    percentage_threshold='Percentage threshold'
 )
 async def need_kick(
     interaction: discord.Interaction,
@@ -96,9 +97,27 @@ async def need_kick(
         f"**{player.nickname}** (last active: {player.last_activity.strftime('%Y-%m-%d')}, battles: {player.battle_count})"
         for player in player_list
     ]
-    message = "Go kick the following inactive players:\n" + "\n".join(player_info)
-    await interaction.response.send_message(message)
+    message = "Go kick the following inactive players:\n"
+    max_length = 2000  # Максимальная длина сообщения в Discord
+    current_message = message
+    first_message_sent = False
 
+    for player in player_info:
+        if len(current_message) + len(player) + 1 > max_length:
+            if not first_message_sent:
+                await interaction.response.send_message(current_message)
+                first_message_sent = True
+            else:
+                await interaction.followup.send(current_message)
+            current_message = player + "\n"
+        else:
+            current_message += player + "\n"
+
+    if current_message.strip():
+        if not first_message_sent:
+            await interaction.response.send_message(current_message)
+        else:
+            await interaction.followup.send(current_message)
 
 if __name__ == "__main__":
     client.run(bot_token)
