@@ -80,10 +80,11 @@ async def get_attendance(interaction: discord.Interaction, name: str, days: int)
 
 @client.tree.command(name="gkick")
 @app_commands.describe(
-    days="Write the numbers of days", activity_threshold="Write inactive period",
-    percentage_threshold='Percentage threshold'
+    days="Write the numbers of days",
+    activity_threshold="Write inactive period",
+    percentage_threshold="Percentage threshold",
 )
-async def need_kick(
+async def need_kick(  # TODO: add check for left players
     interaction: discord.Interaction,
     days: int,
     activity_threshold: int,
@@ -118,6 +119,7 @@ async def need_kick(
             await interaction.response.send_message(current_message)
         else:
             await interaction.followup.send(current_message)
+
 
 if __name__ == "__main__":
     client.run(bot_token)

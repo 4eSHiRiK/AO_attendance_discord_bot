@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.interfaces.services.dto import (
     UserInfoOutputDTO,
@@ -20,3 +21,6 @@ class PlayersBattleServiceABC(ABC):
     async def need_g_kick(
         self, days: int, activity_threshold: int, percentage_threshold: int | None
     ) -> list[InactiveUserDTO] | None: ...
+
+    @abstractmethod
+    async def fetch_guild_members(self) -> dict[str, Any]: ...

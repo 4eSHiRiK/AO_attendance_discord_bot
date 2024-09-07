@@ -1,5 +1,8 @@
-from pydantic import TypeAdapter
+from typing import Any
 
+import aiohttp
+
+from src.core.settings import guild_url
 from src.interfaces.repositories.players_battle_repository import (
     PlayersBattleRepositoryABC,
 )
@@ -41,5 +44,24 @@ class PlayersBattleService(PlayersBattleServiceABC):
                 days, activity_threshold, percentage_threshold
             )
             if player_list:
-                return player_list
+                guild_members_data = await self.fetch_guild_members()
+                guild_member_nicknames = [
+                    member["Name"] for member in guild_members_data
+                ]
+
+                filtered_player_list = [
+                    player
+                    for player in player_list
+                    if player.nickname in guild_member_nicknames
+                ]
+
+                return filtered_player_list if filtered_player_list else None
             return None
+
+    async def fetch_guild_members(self) -> dict[str, Any]:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(guild_url) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    return {}
