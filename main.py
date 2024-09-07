@@ -84,7 +84,7 @@ async def get_attendance(interaction: discord.Interaction, name: str, days: int)
     activity_threshold="Write inactive period",
     percentage_threshold="Percentage threshold",
 )
-async def need_kick(  # TODO: add check for left players
+async def need_kick(
     interaction: discord.Interaction,
     days: int,
     activity_threshold: int,
